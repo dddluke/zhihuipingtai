@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+</head>
+<body>
+
+<div class="left">
+    <form>
+        {% csrf_token %}
+<!-- https://github.com/able8/Django-Course -->
+    </form>
+</div>
+
+</body>
+</html>

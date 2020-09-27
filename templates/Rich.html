@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>富文本</title>
+{#     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>#}
+{#     <script src="static/tinymce/tinymce.min.js" referrerpolicy="origin"></script>#}
+    <script type="text/javascript" src={% static "tinymce/tinymce.min.js" %} referrerpolicy="origin"></script>
+    <script type="text/javascript">
+        tinyMCE.init({
+            selector:'#mytextarea',
+            {#theme: 'advanced',#}
+            {#'theme':"advanced",#}
+            {#language:'zh',#}
+            width: 900,
+            height: 600,
+            language: 'zh_CN',
+            theme: 'silver',
+            plugins: [
+              "link imageupload"
+            ],
+            toolbar: "undo redo | imageupload link | bold italic | alignleft aligncenter alignright alignjustify",
+            {#imageupload_url: '{:U("File/uploadPicture")}'#}
+            automatic_uploads: true,
+            images_upload_url:'postAcceptor.php'
+        });
+    </script>
+</head>
+<body>
+    <form action= "{% url 'text:post' %}", method="post">
+        {% csrf_token %}
+        <textarea id="mytextarea" name="sBlog">
+
+        </textarea>
+        <p><input type="submit" value="发表"></p>
+    </form>
+
+</body>
+</html>
