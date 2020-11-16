@@ -1,0 +1,17 @@
+git config --global user.name "用户名"
+
+git config --global user.email "邮箱"
+
+git init
+
+git config --global core.autocrlf false
+
+git add .
+
+git commit -m "此次上传的说明"
+
+git pull --rebase origin master
+
+git remote add origin "https://github.com/GitHub用户名/代码仓库名称.git"
+
+git push -u origin master

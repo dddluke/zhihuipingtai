@@ -39,23 +39,30 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework.authtoken',
+    'corsheaders',
     'One',
     'text',
-    'tinymce',
-    'ckeditor',
     'taggit',
     'rest_framework_swagger',
     'drf_yasg',
+    'verifications',
+    'channels',
 ]
+
+# SWAGGER_SETTINGS = {
+#     "DEFAULT_GENERATOR_CLASS": "rest_framework.schemas.generators.BaseSchemaGenerator",
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'middleware.middleware',    # log
 ]
 
 ROOT_URLCONF = 'test1.urls'
@@ -63,7 +70,7 @@ ROOT_URLCONF = 'test1.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'static')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -80,6 +87,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'test1.wsgi.application'
+ASGI_APPLICATION = 'test1.routing.application'
+
+# 配置channel layer
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)],  # 这个是redis的地址
+#         },
+#     },
+# }
+
 
 APPEND_SLASH = False
 # Database
@@ -99,35 +118,107 @@ DATABASES = {
     }
 }
 
-# 在根路由配置中指向 Channels。
-ASGI_APPLICATION = 'message_example.routing.application'
-
-# 配置channel layer
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],  # 这个是redis的地址
-        },
-    },
-}
 
 # 配置redis缓存，短时间存储手机验证码
-redis_cache = parser_config('Redis')
 CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": redis_cache['LOCATION'],
+    'default': {  # 默认
+        'BACKEND': "django_redis.cache.RedisCache",
+        # "LOCATION": "redis://192.168.8.111:6379/0",
+        "LOCATION": "redis://127.0.0.1:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            # "PASSWORD": "密码",
-            "DECODE_RESPONSES": True,
+            }
+    },
+    "session": {  # session
+        "BACKEND": "django_redis.cache.RedisCache",
+        # "LOCATION": "redis://192.168.8.111:6379/1",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    'verify_code': {  # 验证码
+        'BACKEND': "django_redis.cache.RedisCache",
+        # "LOCATION": "redis://192.168.8.111:6379/2",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,    # 如果已存在自定义loggers，是否禁用此处logger配置
+#     'formatters': {      # 日志格式化输出
+#         'standard': {
+#             'format': '[{asctime}] {request_id} {name} {levelname} {message}',    # *注意：这里的request_id是我们自定义字段
+#             'datefmt': '%Y-%m-%d %H:%M:%S',    # 日期格式化
+#             'style': '{',      # 格式化识别方式
+#         }
+#     },
+#     'filters': {    # 定义日志过滤器
+#         'require_debug_true': {      # 只有再debug模式下，handdler才有效
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         },
+#         'require_debug_false': {    # 只有在非debug模式下，handdler才有效
+#             '()': 'django.utils.log.RequireDebugFalse',
+#         },
+#         'header_format': {    # 配置request_id，handdler不限制
+#             '()': 'wechaty.utils.middleware.RequestLogFilter'
+#         }
+#     },
+#     'handlers': {
+#         'console': {    #控制台日志
+#             'level': 'DEBUG',
+#             'formatter': 'standard',
+#             'class': 'logging.StreamHandler',
+#             'filters': ['require_debug_true', 'header_format']
+#         },
+#         'info_file': {
+#             'level': 'INFO',      #处理>info级别的日志
+#             'formatter': 'standard',
+#             'encoding': 'utf_8_sig',
+#             'backupCount': 3,      #配置最多保留几次日志
+#             'class': 'logging.handlers.TimedRotatingFileHandler',    #logging自带类，可以实现按日期切割
+#             'filename': f'{HX_SETTINGS.WECHATY["LOG_PATH"]}wechaty-service-info.log',    #info日志目录
+#             'when': 'H',    #配置多久备份一次
+#             'filters': ['require_debug_false', 'header_format']
+#         },
+#         'error_file': {
+#             'level': 'ERROR',      #处理>error级别的日志
+#             'formatter': 'standard',
+#             'encoding': 'utf_8_sig',
+#             'backupCount': 3,    #配置最多保留几次日志
+#             'class': 'logging.handlers.TimedRotatingFileHandler',    #logging自带类，可以实现按日期切割
+#             'filename': f'{HX_SETTINGS.WECHATY["LOG_PATH"]}wechaty-service-error.log',    #error日志目录
+#             'when': 'H',    #配置多久备份一次
+#             'filters': ['require_debug_false', 'header_format']
+#         }
+#     },    # 同上2.1，为了减少篇幅，此处省略
+#     'loggers': {
+#         'wechaty': {    # app名，此app下面的所有log日志输出方式均使用此处定义配置
+#             'handlers': ['console', 'info_file', 'error_file'],    # 日志输出配置
+#             'level': 'INFO',    # 日志输出级别
+#             'propagate': False,    # 不知道啥意思
+#         },
+#         'django': {    # 这里是覆写了系统自带的日志输出配置，系统日志打印格式使用我们自定义配置
+#             'handlers': ['console', 'info_file', 'error_file'],
+#             'level': 'INFO',
+#             'propagate': False,
+#         },
+#         'django.server': {     # 这里是覆写了系统自带的日志输出配置，系统日志打印格式使用我们自定义配置
+#             'handlers': ['console', 'info_file', 'error_file'],
+#             'level': 'ERROR',
+#             'propagate': False,
+#         }
+#     }
+# }
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "session"
+SESSION_COOKIE_AGE = 10
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -143,6 +234,10 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+# Password validation
+# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -161,26 +256,13 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
 
-TINYMCE_DEFAULT_CONFIG = {
-    # 'theme': 'advanced',
-    'width': 800,
-    'height': 600,
-    'relative_urls': False,
-    'remove_script_host': False
-}
+STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    ('upload', os.path.join(STATIC_ROOT, 'upload').replace('\\', '/')),
+]
 
-CKEDITOR_CONFIGS = {
-    'awesome_ckeditor': {
-        'toolbar': 'Basic',
-        'height': 450,
-        'width': 800,
-    },
-}
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, r'static/upload')
 AUTH_USER_MODEL = 'One.LoginUser'  # 扩展系统的用户表后记得添加此行
@@ -234,11 +316,34 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',  # 设置 请求头中的前缀
 }
 
-# token = Token.objects.create(user=)
-# print(token.key)
-
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'width': 800,
     'height': 600,
 }
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = ()
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)

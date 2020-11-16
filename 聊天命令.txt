@@ -1,0 +1,9 @@
+daphne test1.asgi:application
+
+
+https://developer.mozilla.org/en-US/docs/Web/API/Websockets_API
+
+var ws = new WebSocket('ws://localhost:8000/')
+ws.onmessage=function(e){console.log(e)}
+ws.send('ÔÚÂð')
+ws.close()

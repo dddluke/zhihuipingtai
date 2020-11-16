@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>聊天室</h1>
+<div>
+    <input type="text" id="text" placeholder="请输入">
+    <input type="button" value="发送" onclick="sendMsg()">
+    <input type="button" value="断开链接" onclick="close()">
+</div>
+
+<h1>聊天纪录</h1>
+<div id="content">
+
+</div>
+
+<script>
+    var ws = new WebSocket('ws://192.168.8.111:8000/chat/');
+    // 1 发送消息 ws.send()
+    // 2 握手成功之后 自动触发  ws.onopen
+    // 3 服务端发送消息过来 自动触发  ws.onmessage
+    // 4 断开链接 ws.close()
+
+    // 0 握手成功之后自动触发
+    ws.onopen = function () {
+        alert('建立成功')
+    };
+
+    // 1 给服务端发送消息
+    function sendMsg() {
+        ws.send($('#text').val());
+    }
+
+    // 2 接受服务端发送过来的消息
+    ws.onmessage = function (event) {  // event是对象
+        var dataValue = event.data;  // 获取服务端的数据
+        // 用DOM操作将数据动态渲染到页面上
+        var pEle = $('<p>');
+        pEle.text(dataValue);
+        $('#content').append(pEle)
+    };
+
+    // 3 断开链接
+    function close() {
+        ws.close()
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>askjbdfkasjd</title>
+</head>
+<body>
+<form action="{% url 'one:do_login' %}" method="post" enctype="multipart/form-data">
+    {%csrf_token %}
+    <input type="file" multiple="multiple" name="image"/>
+    <input type="text" name="username">
+    <input type="text" name="id">
+    <input type="submit" value="登录">
+</form>
+</body>
+</html>
+
+{#<!doctype html>#}
+{#<html>#}
+{#<head>#}
+{#  <title>Add</title>#}
+{#  <meta charset="utf-8">#}
+{#</head>#}
+{#<body>#}
+{#  <h1>Add!</h1>#}
+{##}
+{#  <form method="post" enctype="multipart/form-data" action="{% url'app01:add' %}">#}
+{#    {%csrf_token %}#}
+{#    {{ af.as_p }}#}
+{#    <input type="submit" value="OK"/>#}
+{#  </form>#}
+{#</body>#}
+{#</html>#}

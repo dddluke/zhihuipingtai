@@ -16,10 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf.urls import url
+from django.views.generic import TemplateView
 from rest_framework import permissions
 from rest_framework_swagger.views import get_swagger_view
 from drf_yasg.views import get_schema_view
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from .views import *
+from django.contrib import staticfiles
+from One import consumers
 from drf_yasg import openapi
+# from verifications import urls
 schema_view = get_swagger_view(title='API文档')
 
 schema_view = get_schema_view(
@@ -37,9 +43,19 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('backendlogin/', admin.site.urls),
     path('one/', include('One.urls')),
     path('text/', include('text.urls')),
+    # ('upload',path.join(STATIC_ROOT,'upload').replace('\\','/') ),
+    # path('static/', include('static')),
+    path(r'chat/', consumers.ChatConsumer),
+    path(r'verification/', include('verifications.urls')),
+    # path(r'verification/', include('verifications.urls')),
     path(r'docs/', schema_view),
+    # path(r'login/', login),
+    path(r'', TemplateView.as_view(template_name='index.html')),
+    # path(r'blogin/', blogin),
+
     #第三方登录
     # path('', include('social_django.urls', namespace='social')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$',
@@ -47,4 +63,8 @@ urlpatterns = [
     path(r'swagger/', schema_view.with_ui('swagger', cache_timeout=0),
          name='schema-swagger-ui'),
     path(r'redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schemaredoc'),
+
+
+
 ]
+urlpatterns += staticfiles_urlpatterns()

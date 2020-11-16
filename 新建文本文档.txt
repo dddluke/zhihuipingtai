@@ -1,0 +1,4 @@
+objJson = serialize("json", Company.objects.filter(active=1))
+objStr = json.loads(objJson)
+response_data = {'code': '200', 'data': objStr}
+return HttpResponse(json.dumps(response_data))

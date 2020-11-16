@@ -8,9 +8,19 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 """
 
 import os
-
+from .websocket import websocket_applicaiton
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'test1.settings')
 
-application = get_asgi_application()
+http_application = get_asgi_application()
+
+
+async def application(scope, receive, send):
+    print('scope:', scope)
+    if scope['type'] == 'http':
+        await http_application(scope, receive, send)
+    elif scope['type'] == 'websocket':
+        await websocket_applicaiton(scope, receive, send)
+    else:
+        raise Exception('UNKOWN SCOPE TYPE, ' + scope['type'])
