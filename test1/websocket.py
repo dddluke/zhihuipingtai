@@ -14,7 +14,9 @@ async def websocket_applicaiton(scope, receive, send):
             # 得到auth
             query_string = scope.get('query_string').decode()
             auth = query_string.split('=')[1]
-
+            # print(auth)
+            # auth = '1'
+            # print(auth)
             # 记录send对象
             CONNECTIONS[auth] = send
         # 接收断开消息

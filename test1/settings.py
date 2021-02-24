@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'drf_yasg',
     'verifications',
-    'channels',
+    'notifications',
+    'django_apscheduler',
 ]
 
 # SWAGGER_SETTINGS = {
@@ -86,7 +87,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'test1.wsgi.application'
+# WSGI_APPLICATION = 'test1.wsgi.application'
 ASGI_APPLICATION = 'test1.routing.application'
 
 # 配置channel layer
