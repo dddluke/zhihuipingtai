@@ -2,16 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ed367c63-d9c7-42fb-80b0-78ed7a373efc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/static/my_notifications.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/venv/Lib/fcntl.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/One/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/One/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/One/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/One/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/One/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/One/tests.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/One/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/One/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/One/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/One/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/upload/uicons/20201015/头像测试.jpg" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/demo-y" beforeDir="false" afterPath="$PROJECT_DIR$/templates/demo-y" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/demo-y/src/assets/css/reset.css" beforeDir="false" afterPath="$PROJECT_DIR$/templates/demo-y/src/assets/css/reset.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/demo-y/src/common/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/demo-y/src/common/api.js" afterDir="false" />
@@ -97,15 +92,6 @@
       <change beforePath="$PROJECT_DIR$/templates/demo-y/src/filter/timestamp.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/demo-y/src/filter/timestamp.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/demo-y/src/filter/toTime.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/demo-y/src/filter/toTime.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/demo-y/src/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/demo-y/src/store/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/新建文件夹/chat.html" beforeDir="false" afterPath="$PROJECT_DIR$/static/chat.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/新建文件夹/index1.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/新建文件夹/index1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test1/chat.html" beforeDir="false" afterPath="$PROJECT_DIR$/test1/chat.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test1/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/test1/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test1/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/test1/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test1/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/test1/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test1/websocket.py" beforeDir="false" afterPath="$PROJECT_DIR$/test1/websocket.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/verifications/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/verifications/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/verifications/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/verifications/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -417,7 +403,7 @@
       <workItem from="1613776948739" duration="17338000" />
       <workItem from="1613950296960" duration="29148000" />
       <workItem from="1614038398511" duration="28443000" />
-      <workItem from="1614124758370" duration="17722000" />
+      <workItem from="1614124758370" duration="19398000" />
     </task>
     <servers />
   </component>
@@ -446,26 +432,26 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2409" y="318" key="FileChooserDialogImpl/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1609815412715" />
-    <state width="1877" height="324" key="GridCell.Tab.0.bottom" timestamp="1614150846954">
+    <state width="1877" height="324" key="GridCell.Tab.0.bottom" timestamp="1614152541134">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1877" height="324" key="GridCell.Tab.0.bottom/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1614127027261" />
-    <state width="1877" height="324" key="GridCell.Tab.0.bottom/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614150846954" />
-    <state width="1877" height="324" key="GridCell.Tab.0.center" timestamp="1614150846952">
+    <state width="1877" height="324" key="GridCell.Tab.0.bottom/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614152541134" />
+    <state width="1877" height="324" key="GridCell.Tab.0.center" timestamp="1614152541134">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1877" height="324" key="GridCell.Tab.0.center/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1614127027260" />
-    <state width="1877" height="324" key="GridCell.Tab.0.center/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614150846952" />
-    <state width="1877" height="324" key="GridCell.Tab.0.left" timestamp="1614150846951">
+    <state width="1877" height="324" key="GridCell.Tab.0.center/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614152541134" />
+    <state width="1877" height="324" key="GridCell.Tab.0.left" timestamp="1614152541134">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1877" height="324" key="GridCell.Tab.0.left/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1614127027260" />
-    <state width="1877" height="324" key="GridCell.Tab.0.left/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614150846951" />
-    <state width="1877" height="324" key="GridCell.Tab.0.right" timestamp="1614150846953">
+    <state width="1877" height="324" key="GridCell.Tab.0.left/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614152541134" />
+    <state width="1877" height="324" key="GridCell.Tab.0.right" timestamp="1614152541134">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1877" height="324" key="GridCell.Tab.0.right/0.0.1920.1080/1920.0.1920.1080@0.0.1920.1080" timestamp="1614127027260" />
-    <state width="1877" height="324" key="GridCell.Tab.0.right/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614150846953" />
+    <state width="1877" height="324" key="GridCell.Tab.0.right/0.0.1920.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1614152541134" />
     <state x="2153" y="8" width="1296" height="1072" key="SettingsEditor" timestamp="1613691586941">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>

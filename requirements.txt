@@ -3,6 +3,7 @@ aliyun-python-sdk-core==2.13.25
 aliyun-python-sdk-core-v3==2.13.11
 aliyun-python-sdk-rds==2.5.1
 amqp==5.0.1
+APScheduler==3.7.0
 asgiref==3.2.10
 astroid==2.4.2
 async-timeout==3.0.1
@@ -27,6 +28,7 @@ coreschema==0.0.4
 cryptography==3.1
 daphne==2.5.0
 Django==3.1.2
+django-apscheduler==0.5.2
 django-ckeditor==6.0.0
 django-cors-headers==3.5.0
 django-filter==2.3.0
@@ -90,6 +92,7 @@ swapper==1.1.2.post1
 toml==0.10.1
 Twisted==20.3.0
 txaio==20.4.1
+tzlocal==2.1
 uritemplate==3.0.1
 urllib3==1.25.10
 vine==5.0.0
