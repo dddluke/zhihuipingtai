@@ -652,3 +652,15 @@ class ContactUs(models.Model):
     question = models.TextField(null=True, blank=True)
     read = models.BooleanField(default=0)
     date = models.DateTimeField(null=True)
+
+
+# 公告提醒
+class Announce(models.Model):
+    head = models.CharField(max_length=40, verbose_name="消息标题", null=True)
+    content = models.CharField(max_length=500, verbose_name="公告内容")
+    sender_id = models.IntegerField(verbose_name="公告建立者id")
+    datetime = models.DateTimeField(verbose_name="建立公告时间")
+    type = models.CharField(max_length=20, verbose_name='公告类型', null=True)  # 0 系统通知 1用户自己设置的通知
+    status = models.CharField(max_length=30, verbose_name='公告状态', default=1)  #  1 未发送 2 已读 3 发送但未读
+    set_time = models.DateTimeField(verbose_name="用户设置的通知时间", null=True)
+    singnal = models.IntegerField(verbose_name="通知开关", null=True) #  0 关闭提醒 1 开启提醒

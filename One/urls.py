@@ -360,4 +360,23 @@ urlpatterns = [
     url(r'^monthalarm/', MonthAlarm.as_view()),  # 大屏左屏设备月度报警统计
     url(r'^yearalarm/', YearAlarm.as_view()),  # 大屏左屏设备年度报警统计
     url(r'^alarmlist/', AlarmList.as_view()),  # 大屏左屏历史报警记录
+
+    # 公告提醒
+    # 建立 发送公告提醒 站内消息
+    url(r'^sendannouncement/', SendAnnouncement.as_view()),  # 后台人员建立公告或者前台人员提醒 发送公告或者提醒
+    # 展示公告信息
+    url(r'^selectannounce/', SelectAnnounce.as_view()),  # 任意身份查询单个公告
+    url(r'^selectallannounce/', SelectAllAnnounce.as_view()),  # 前台用户查询所有已发送的公告
+    url(r'^aselectallannounce', ASelectAllAnnounce.as_view()),  # 超级管理员，运维查询所有的系统通知 即已发布的系统通知 可关键字查询
+
+    url(r'^deleteannounce/', DeleteAnnounce.as_view()),  # 任意用户删除删除属于自己的单个公告
+    # url(r'^deleteallannounce/', DeleteAllAnnounce.as_view()),  # 任意用户删除属于自己的所有公告消息
+    # url(r'^readallmessage/', ReadAllMessage.as_view()),         # 普通用户一键已读所有公告
+    url(r'^selectpremessage/', SelectPreMessage.as_view()),  # 前台查询未到时提醒通知 可添加关键字查询
+    url(r'^closeoropenmessage/', AboutMessage.as_view()),  # 前台开启或者关闭定时任务
+    # url(r'^fuserdeletemessage/', FUserDeleteMessage.as_view()),    # 完成前台用户删除自己到期的提醒
+    url(r'^editmessage/', EditMessage.as_view()),  # 完成所有人更改自己发出的提醒公告
+    url(r'^selectmessagealone/', SelectMessageAlone.as_view()),  # 所有人根据不同传参 查询到时保养提醒 系统公告
+
+
 ]

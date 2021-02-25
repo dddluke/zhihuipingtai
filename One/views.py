@@ -3546,6 +3546,9 @@ class SelectMyComplain(GenericAPIView):
         # page = CurrentPagination
         if serializer.is_valid():
             usercomplains = Complainrecord.objects.filter(cr_u_id=serializer.data['user_id'])
+            if not usercomplains:
+                response_data = {'code': ["923"], 'message': "目前不存在投诉记录"}
+                return HttpResponse(json.dumps(response_data))
             objJson = serialize("json", usercomplains)
             objStr = json.loads(objJson)
             response_data = {'code': '200', 'data': objStr}
@@ -3740,7 +3743,6 @@ class Addmaintainrecord(GenericAPIView):
             return Response(response, status=200)
         return Response(serializer.errors)
 
-
 class Maintainrecordlist(GenericAPIView):
     '''
     查看设备所有维修记录,需要身份验证
@@ -3752,9 +3754,11 @@ class Maintainrecordlist(GenericAPIView):
     def get(self, request, *args, **kwargs):
         page = int(request.GET.get("page"))  # 第几页
         per_page = int(request.GET.get("per_page", 10))  # 每页多少条
-        id = request.GET.get("d_id")
-
-        records = Devicemaintainrecord.objects.filter(dm_d_id_id=id).order_by('id')
+        id = request.GET.get("dm_d_id")
+        records = Devicemaintainrecord.objects.filter(dm_d_id=id).order_by('id')
+        if not records:
+            response_data = {'code': ["924"], 'message': "目前设备不存在维修记录"}
+            return HttpResponse(json.dumps(response_data))
 
         paginator = Paginator(records, per_page)
         total_page = paginator.num_pages
@@ -3766,7 +3770,7 @@ class Maintainrecordlist(GenericAPIView):
 
         objStr = json.loads(objJson)
         # objStr1 = json.loads(objJson1)
-        response_data = {'code': ["200"], 'data': objStr, 'max_page': total_page, 'datacount': total_data}
+        response_data = {'code': '200', 'data': objStr, 'max_page': total_page, 'datacount': total_data}
 
         return HttpResponse(json.dumps(response_data))
 
@@ -4125,7 +4129,9 @@ class Viewworksheets(GenericAPIView):
         serializer = ViewworksheetsSerializer(data=request.data)
         if serializer.is_valid():
             # objJson = serialize("json", Worksheet.objects.filter(Q(w_status='未完成') | Q(w_status='进行中')))
-
+            if not Worksheet.objects.all():
+                response_data = {'code': ["925"], 'message': "目前不存在工单信息"}
+                return HttpResponse(json.dumps(response_data))
             objJson = serialize("json", Worksheet.objects.all())
             objStr = json.loads(objJson)
             response_data = {'code': ["200"], 'data': objStr}
@@ -4185,7 +4191,6 @@ class SearchworksheetsV1(GenericAPIView):
 #             return HttpResponse(json.dumps(response_data))
 #         return Response(serializer.errors)
 
-
 # 查看我的工单列表
 class Viewmyworksheets(GenericAPIView):
     '''
@@ -4211,6 +4216,10 @@ class Viewmyworksheets(GenericAPIView):
                 'code': ["996"]
             }
             return Response(response1, status=200)
+
+        if not Worksheet.objects.filter(w_e_id_id=user_id):
+            response_data = {'code': ["925"], 'message': "目前不存在工单信息"}
+            return HttpResponse(json.dumps(response_data))
 
         objJson = serialize("json", Worksheet.objects.filter(w_e_id_id=user_id))
         objStr = json.loads(objJson)
@@ -4457,6 +4466,9 @@ class Enterpriselist(GenericAPIView):
         per_page = int(request.GET.get("per_page", 10))  # 每页多少条
 
         enterprises = Enterprise.objects.all().order_by('id')
+        if not enterprises:
+            response_data = {'code': ["926"], 'message': "目前不存在企业动态信息"}
+            return HttpResponse(json.dumps(response_data))
         paginator = Paginator(enterprises, per_page)
 
         total_page = paginator.num_pages
@@ -4469,6 +4481,7 @@ class Enterpriselist(GenericAPIView):
         response_data = {'code': ["200"], 'data': objStr, 'totalpage': total_page, 'datacount': total_data}
 
         return HttpResponse(json.dumps(response_data))
+
 
 
 class Viewenterprise(GenericAPIView):
@@ -4770,7 +4783,6 @@ class Uploadimage(GenericAPIView):
 
         return Response(response_data)
 
-
 class Knowledgelist(GenericAPIView):
     '''
     查询知识库列表,需前端传值 type = '知识库' 或者 '行业资讯',页数：page 每页条数：per_page
@@ -4784,9 +4796,12 @@ class Knowledgelist(GenericAPIView):
         page = int(request.GET.get("page"))  # 第几页
         per_page = int(request.GET.get("per_page", 10))  # 每页多少条
 
-        knowledges = Knowledge.objects.filter(k_type=type, k_draft=0).order_by('k_thumbs_up').order_by(
-            'k_visit').order_by(
+        knowledges = Knowledge.objects.filter(k_type=type).order_by('k_thumbs_up').order_by('k_visit').order_by(
             '-k_date')
+        if not knowledges:
+            response_data = {'code': ["928"], 'message': "目前不存在知识库信息"}
+            return HttpResponse(json.dumps(response_data))
+
         paginator = Paginator(knowledges, per_page)
 
         total_page = paginator.num_pages
@@ -4796,11 +4811,9 @@ class Knowledgelist(GenericAPIView):
         objJson = serialize("json", page_object)
         objStr = json.loads(objJson)
 
-        response_data = {'code': ["200"], 'data': objStr, 'totalpage': total_page, 'datacount': total_data,
-                         'Mine': False}
+        response_data = {'code': ["200"], 'data': objStr, 'totalpage': total_page, 'datacount': total_data}
 
         return HttpResponse(json.dumps(response_data))
-
 
 class MyKnowledgelist(GenericAPIView):
     '''
@@ -4961,6 +4974,7 @@ class MyKnowledgeDraftlistV1(GenericAPIView):
         return HttpResponse(json.dumps(response_data))
 
 
+
 class KnowledgelistV3(GenericAPIView):
     '''
     根据标签查询行业资讯列表,需前端传值标签k_tag  页数：page 每页条数：per_page
@@ -4977,10 +4991,12 @@ class KnowledgelistV3(GenericAPIView):
         page = int(request.GET.get("page"))  # 第几页
         per_page = int(request.GET.get("per_page", 10))  # 每页多少条
 
-        knowledges = Knowledge.objects.filter(k_type=type, k_draft=0).filter(k_verify=1).order_by(
-            'k_thumbs_up').order_by(
+        knowledges = Knowledge.objects.filter(k_type=type).filter(k_verify=1).order_by('k_thumbs_up').order_by(
             'k_visit').order_by(
             '-k_date')
+        if not knowledges:
+            response_data = {'code': ["927"], 'message': "目前不存在行业资讯信息"}
+            return HttpResponse(json.dumps(response_data))
         paginator = Paginator(knowledges, per_page)
 
         total_page = paginator.num_pages
@@ -5005,7 +5021,10 @@ class KnowledgelistV4(GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         type = "行业资讯"
-        knowledges = Knowledge.objects.filter(k_type=type, k_draft=0).filter(k_verify=1).order_by('-k_date')[:5]
+        knowledges = Knowledge.objects.filter(k_type=type).filter(k_verify=1).order_by('-k_date')[:5]
+        if not knowledges:
+            response_data = {'code': ["927"], 'message': "目前不存在行业资讯信息"}
+            return HttpResponse(json.dumps(response_data))
         objJson = serialize("json", knowledges)
         objStr = json.loads(objJson)
 
@@ -10609,10 +10628,14 @@ class SelectFitAccSub(GenericAPIView):
         serializer = SelectFitAccSubSerializer(data=request.data)
         if serializer.is_valid():
             fitting = Fittings.objects.filter(f_subject_id=serializer.data['sub_id'])
+            if not fitting:
+                response_data = {'code': ["953"], 'message': "此配件类下目前没有配件"}
+                return HttpResponse(json.dumps(response_data))
             data1 = []
 
             f_sub_name = FitSub.objects.get(id=serializer.data['sub_id']).fs_name
 
+            # print(fitting)
             for fit in fitting:
                 data = {}
                 data["fit_name"] = fit.f_name
@@ -10628,7 +10651,6 @@ class SelectFitAccSub(GenericAPIView):
             return HttpResponse(json.dumps(response_data))
         return Response(serializer.errors)
 
-
 # 查询配件类
 class SelectFitSub(GenericAPIView):
     '''
@@ -10642,6 +10664,9 @@ class SelectFitSub(GenericAPIView):
         serializer = SelectFitSubSerializer(data=request.data)
         if serializer.is_valid():
             fitsub = FitSub.objects.all()
+            if not fitsub:
+                response_data = {'code': ["951"], 'message': "配件类型不存在"}
+                return HttpResponse(json.dumps(response_data))
             objJson = serialize("json", fitsub)
             objStr = json.loads(objJson)
             response_data = {'code': ["200"], 'data': objStr}
@@ -10912,9 +10937,13 @@ class SelectAllFit(GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         a = FitSub.objects.all()
+        if not a:
+            response_data = {'code': ["951"], 'message': "配件类型不存在"}
+            return HttpResponse(json.dumps(response_data))
         d = []
 
         for i in a:  # 每个类
+
             fits = Fittings.objects.filter(f_subject_id=i.id)
             subject = i.fs_name
             sub_id = i.id
@@ -11644,3 +11673,425 @@ def historydata(request):
         print('---------------------功能结束------------------')
     response_data = {'code': ["998"], "message": ['公司不存在或已被平台停用']}
     return HttpResponse(json.dumps(response_data))
+
+
+
+
+# 建立公告，发送公告
+class SendAnnouncement(GenericAPIView):
+    """
+    建立公告 ，发送公告
+    """
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = SendAnnounceSerializer(data=request.data)
+        if serializer.is_valid():
+            # set_time = serializer.data['set_time']
+
+            announce = Announce()
+            announce.head = serializer.data["head"]
+            announce.datetime = datetime.now().strftime("%Y-%m-%d %H:%M")
+            announce.content = serializer.data['a_content']
+            announce.sender_id = serializer.data["user_id"]
+            user = LoginUser.objects.get(id=serializer.data["user_id"])
+
+            if user.u_type == "运维" or user.u_type == "超级管理员":
+                announce.type = 0
+                announce.status = 3  # 公告设置成未读
+                announce.save()
+                userlist = LoginUser.objects.all()
+                global frontuser
+                #  给所有用户添加信息
+                for user in userlist:
+                    user.message.add(announce)
+                response = {
+                    'message': ['系统通知创建成功'],
+                    'code': ["200"]
+                }
+            elif user.u_type in frontuser:  # 前台用户
+                announce.type = 1  # 用户自己设置的通知为1
+                announce.status = 1  # 消息状态设置为未发送
+                announce.set_time = serializer.data['set_time']
+                announce.singnal = 1
+                announce.save()
+                user.message.add(announce)
+                set_time = datetime.strptime(serializer.data['set_time'], '%Y-%m-%dT%H:%M:%S')
+
+                # 因重启系统后定时任务都消失 定时任务改为每天8点发送当天的预约提醒
+                # 代码再主url中
+
+                # 只给此员工创建定时任务
+                def func():
+                    announce.status = 3  # 信息设置成未读状态 1 未发送 2 已读 3 发送但未读
+                    announce.save()
+
+                # 定时任务
+                scheduler.add_job(func, 'date',
+                                  run_date=datetime(set_time.year, set_time.month, set_time.day, set_time.hour,
+                                                    set_time.minute), id=str(announce.id))
+
+
+                response = {
+                    'message': ['保养提醒创建成功'],
+                    'code': ["200"]
+                }
+
+            return Response(response, status=200)
+
+        return Response(serializer.errors)
+
+
+# # 发送站内消息
+# sender = LoginUser.objects.get(id=serializer.data['user_id'])  # 发送者 一般是超级管理员
+# # print(type(sender))
+# # notify.send(user=发送者,recipient=接收者,verb="通知内容",action_object=动作发出的起点)
+# recipient = LoginUser.objects.exclude(id=serializer.data["user_id"])  # 接收者 一般是除了发送者之外的所有用户
+# # print(recipient)
+# verb = "{0}发布了公告{1}".format(sender, strip_tags(serializer.data['a_content']))
+# # print(verb)
+# notify.send(sender, recipient=recipient, verb=verb, action_object=announce)
+
+# 时间比较大小  前面时间大于后面时间 返回0 ，否则返回1
+def CompareTime(front_time, last_time):
+    if int(front_time.strftime("%Y%m%d")) >= int(last_time.strftime("%Y%m%d")):
+        return 0
+    else:
+        return 1
+
+# 任意用户查询的单个公告
+class SelectAnnounce(GenericAPIView):
+    '''
+    查询单个公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+
+    # serializer_class = SelectFitSubSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = SelectAnnounceSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.get(id=serializer.data['user_id'])  # 获取用户
+            announce = user.message.get(id=serializer.data['a_id'])
+
+            if announce.set_time:
+                # 通知
+                now = datetime.now()
+                a = CompareTime(now, announce.set_time)
+                # 查询时间 大于设置的通知时间
+                if a == 0:
+                    announce.status = 2  # 消息状态设置成已读
+                    announce.save()
+            else:
+                # 系统通知
+                announce.status = 2  # 消息状态设置成已读
+                announce.save()
+
+            objJson = serialize("json", [announce])
+            objStr = json.loads(objJson)
+            response_data = {'code': ["200"], 'data': objStr}
+            return HttpResponse(json.dumps(response_data))
+        return Response(serializer.errors)
+
+
+# 前台用户查询所有已发送的公告  最新的在上面
+class SelectAllAnnounce(GenericAPIView):
+    '''
+    查询公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+
+    # serializer_class = SelectFitSubSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = SelectAllAnnounceSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.get(id=serializer.data['user_id'])  # 获取用户
+            announce = user.message.exclude(status=1).order_by('-datetime')  # 查询所有发送但未读和已读的信息
+            if not announce:
+                response_data = {'code': ["931"], 'message': "消息不存在"}
+                return HttpResponse(json.dumps(response_data))
+
+            objJson = serialize("json", announce)
+            objStr = json.loads(objJson)
+            response_data = {'code': ["200"], 'data': objStr}
+            return HttpResponse(json.dumps(response_data))
+        return Response(serializer.errors)
+
+
+# 前台用户查询所有未到时消息通知  最新的在上面
+class SelectPreMessage(GenericAPIView):
+    '''
+    查询公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = SelectAllAnnounceSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = SelectAllAnnounceSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.get(id=serializer.data['user_id'])  # 获取用户
+
+            if not serializer.data['keyword']:
+                announce = user.message.filter(status=1).order_by('-datetime')  # 查询所有发送但未读和已读的信息
+            else:
+                announce = user.message.filter(head__icontains=serializer.data['keyword'])
+            if not announce:
+                response_data = {'code': ["931"], 'message': "公告不存在"}
+                return HttpResponse(json.dumps(response_data))
+            objJson = serialize("json", announce)
+            objStr = json.loads(objJson)
+            response_data = {'code': ["200"], 'data': objStr}
+            return HttpResponse(json.dumps(response_data))
+
+        return Response(serializer.errors)
+
+
+response = {}
+
+
+# 前台开启或者关闭定时任务
+class AboutMessage(GenericAPIView):
+    '''
+    前台开启或者关闭定时任务
+    '''
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = AboutMessageSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = AboutMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.get(id=serializer.data['user_id'])  # 获取用户
+            announce = user.message.get(id=serializer.data['a_id'])
+            option = serializer.data["option"]
+            global response
+
+            # 用户关闭提醒
+            if option == 'False':
+                # scheduler.remove_job(job_id=str(announce.id))
+                # 因重启系统后，定时器关闭 采用每天定时方式修改开启关闭属性值
+                announce.singnal = 0  # 关闭
+                announce.save()
+                response = {
+                    'message': ['定时提醒已经关闭'],
+                    'code': ["200"]
+                }
+
+            # 用户开启提醒
+            if option == 'True':
+                # 只给此员工创建定时任务
+                # def func():
+                #     announce.status = 3  # 信息设置成未读状态 1 未发送 2 已读 3 发送但未读
+                #     announce.save()
+
+                announce.singnal = 1  # 开启
+                announce.save()
+
+                # set_time = datetime.strptime(str(announce.set_time), '%Y-%m-%d %H:%M:%S')
+                # # 定时任务
+                #
+                # print(str(announce.id))
+                # scheduler.add_job(func, 'date',
+                #                   run_date=datetime(set_time.year, set_time.month, set_time.day, set_time.hour,
+                #                                     set_time.minute, ), id=str(announce.id))
+                # # scheduler.start()
+                response = {
+                    'message': ['定时提醒已经开启'],
+                    'code': ["200"]
+                }
+
+            return HttpResponse(json.dumps(response))
+        return Response(serializer.errors)
+
+
+# 超级管理员 管理员 运维查询所有公告
+class ASelectAllAnnounce(GenericAPIView):
+    '''
+    查询公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+
+    serializer_class = ASelectAllAnnounceSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = ASelectAllAnnounceSerializer(data=request.data)
+        if serializer.is_valid():
+            # if serializer.data["number"]==0:
+            if serializer.data['keyword']:
+                announce = Announce.objects.filter(type=0).order_by('-datetime').filter(
+                    head__icontains=serializer.data['keyword'])
+            else:
+                announce = Announce.objects.filter(type=0).order_by('-datetime')  # 查询所有发送但未读和已读的信息
+            if not announce:
+                response_data = {'code': ["931"], 'message': "公告不存在"}
+                return HttpResponse(json.dumps(response_data))
+            objJson = serialize("json", announce)
+            objStr = json.loads(objJson)
+            response_data = {'code': ["200"], 'data': objStr}
+            return HttpResponse(json.dumps(response_data))
+        return Response(serializer.errors)
+
+
+# 普通用户删除单个公告
+class DeleteAnnounce(GenericAPIView):
+    '''
+    删除公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = DeleteAnnounceSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = DeleteAnnounceSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.get(id=serializer.data['user_id'])  # 获取用户
+            announce = user.message.get(id=serializer.data['a_id'])
+            if not announce:
+                response_data = {'code': ["931"], 'message': "公告不存在"}
+                return HttpResponse(json.dumps(response_data))
+            announce.delete()
+            response = {
+                'message': ['公告删除成功'],
+                # 'token':token
+                'code': ["200"]
+            }
+            return Response(response, status=200)
+        return Response(serializer.errors)
+
+
+#
+# # 完成前台用户删除自己到期的提醒  单个
+# class FUserDeleteMessage(GenericAPIView):
+#     '''
+#     完成前台用户删除自己到期的提醒  单个
+#     '''
+#     authentication_classes = []
+#     permission_classes = []
+#     serializer_class = DeleteAnnounceSerializer
+#
+#     def post(self, request, *args, **kwargs):
+#         serializer = DeleteAnnounceSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = LoginUser.objects.filter(id=serializer['user_id'])  # 获取用户
+#             announce = user.message.filter(id=serializer.data['a_id'])
+#             announce.delete()
+#             response = {
+#                 'message': ['公告删除成功'],
+#                 # 'token':token
+#                 'code': ["200"]
+#             }
+#             return Response(response, status=200)
+#         return Response(serializer.errors)
+
+
+# 普通用户删除属于自己的所有公告
+class DeleteAllAnnounce(GenericAPIView):
+    '''
+    删除所有公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = DeleteAllAnnounceSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = DeleteAllAnnounceSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.filter(id=serializer['user_id'])  # 获取用户
+            user.message.clear()  # 找到与用户对应的消息公告 删除
+
+            response = {
+                'message': ['公告删除成功'],
+                # 'token':token
+                'code': ["200"]
+            }
+            return Response(response, status=200)
+        return Response(serializer.errors)
+
+
+# 普通用户一键已读所有未读公告
+class ReadAllMessage(GenericAPIView):
+    '''
+    删除所有公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = ReadAllMessageSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = ReadAllMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.filter(id=serializer['user_id'])  # 获取用户
+            announces = user.message.objects.filter(status=3)  # 找到与用户对应的消息公告
+            for i in announces:
+                i.status = 2  # 把消息状态改为已读
+            #   i.save()
+            announces.save()  # 保存状态
+            response = {
+                'message': ['消息全部已读成功'],
+                # 'token':token
+                'code': ["200"]
+            }
+            return Response(response, status=200)
+        return Response(serializer.errors)
+
+
+
+# 完成所有人更改自己发出的提醒公告
+class EditMessage(GenericAPIView):
+    '''
+    完成所有人更改自己发出的提醒公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = EditMessageSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = EditMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            announce = Announce.objects.get(id=serializer.data['a_id'])
+            announce.head = serializer.data['head']
+            announce.content = serializer.data['a_content']
+            if serializer.data['set_time']:
+                announce.set_time = serializer.data['set_time']
+            announce.save()
+            response = {
+                'message': ['信息修改成功'],
+                # 'token':token
+                'code': ["200"]
+            }
+            return Response(response, status=200)
+        return Response(serializer.errors)
+
+
+# 所有人根据不同传参 查询到时保养提醒 系统公告
+class SelectMessageAlone(GenericAPIView):
+    '''
+    查询单个公告
+    '''
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = SelectMessageAloneSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = SelectMessageAloneSerializer(data=request.data)
+        if serializer.is_valid():
+            user = LoginUser.objects.get(id=serializer.data['user_id'])  # 获取用户
+            # 0 系统通知 ，1 自定义消息通知
+            if serializer.data['c_id'] == 0:
+                announce = user.message.filter(type=0).exclude(status=1).order_by('-datetime')
+            else:
+                announce = user.message.filter(type=1).exclude(status=1).order_by('-datetime')
+            if not announce:
+                response_data = {'code': ["931"], 'message': "公告不存在"}
+                return HttpResponse(json.dumps(response_data))
+            objJson = serialize("json", announce)
+            objStr = json.loads(objJson)
+            response_data = {'code': ["200"], 'data': objStr}
+            return HttpResponse(json.dumps(response_data))
+        return Response(serializer.errors)

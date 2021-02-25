@@ -2867,3 +2867,239 @@ class FixFitSubSerializer(serializers.ModelSerializer):
             raise ValidationError(detail={'code': 992, 'message': ['不存在此配件类']})
 
         return attrs
+
+
+
+
+# 建立公告 发送公告
+class SendAnnounceSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    head = serializers.CharField(required=True, help_text='公告标题')
+    a_content = serializers.CharField(required=True, help_text='公告')
+    set_time = serializers.DateTimeField(required=False, help_text='通知发送时间')
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'head','a_content', 'set_time')
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type='超级管理员')):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+
+        return attrs
+
+
+# 1 查询单个公告     2  所有人根据不同传参 查询到时保养提醒 系统公告
+class SelectAnnounceSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    a_id = serializers.CharField(required=True, help_text='公告id')
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'a_id')
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type='超级管理员')):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+        # if not Announce.objects.filter(id=attrs['a_id']):
+        #     raise ValidationError(detail={'code': 943, 'message': ['公告不存在']})
+
+        return attrs
+
+
+# 查询所有公告
+class SelectAllAnnounceSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    # a_id = serializers.CharField(required=True, help_text='公告')
+    keyword = serializers.CharField(required=False, allow_blank=True, help_text="标题关键字")
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'keyword' )
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+                Q(u_type='员工') | Q(u_type='公司管理员')| Q(u_type='设备管理员')):
+            raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+        if not Announce.objects.filter():
+            raise ValidationError(detail={'code': 943, 'message': ['消息通知不存在']})
+
+        return attrs
+
+
+# 前台开启或者关闭定时任务
+class AboutMessageSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    a_id = serializers.CharField(required=True, help_text='定时任务id')
+    option = serializers.CharField(required=True, help_text="开关操作") # 0 ,1 0
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'option','a_id')
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+                Q(u_type='员工') | Q(u_type='公司管理员') | Q(u_type='设备管理员')):
+            raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+
+
+        return attrs
+
+
+# 超级管理员 运维 查询所有公告
+class ASelectAllAnnounceSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    # number = serializers.IntegerField(required=True, help_text="用户选择传值") # 0 已发布的系统通知 1 所有的系统通知
+    keyword = serializers.CharField(required=False, allow_blank=True, help_text='关键字') # 关键字搜索 关键字
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'keyword')
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(Q(u_type='运维') | Q(u_type='超级管理员')):
+            raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+        if not Announce.objects.all():
+            raise ValidationError(detail={'code': 943, 'message': ['公告不存在']})
+
+        return attrs
+
+
+# 删除单个公告
+class DeleteAnnounceSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    a_id = serializers.IntegerField(required=True, help_text='消息id')
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'a_id')
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type="超级管理员")):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+        if not Announce.objects.filter(id=attrs['a_id']):
+            raise ValidationError(detail={'code': 941, 'message': ['公告已删除，不可重复删除']})
+
+        return attrs
+
+
+# 删除全部公告
+class DeleteAllAnnounceSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', )
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type="超级管理员")):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+        if not Announce.objects.all():
+            raise ValidationError(detail={'code': 941, 'message': ['公告已删除，不可重复删除']})
+
+        return attrs
+
+
+# 普通用户一键已读全部公告
+class ReadAllMessageSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', )
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type="超级管理员")):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+        user = LoginUser.objects.filter(id=attrs['user_id'])  # 获取用户
+        announces = user.message.objects.filter(status=3)     # 获取已发送但未读的消息
+        if not announces:
+            raise ValidationError(detail={'code': 936, 'message': ['暂时无未读消息']})
+
+        return attrs
+
+
+# 建立公告 发送公告
+class EditMessageSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    a_id = serializers.IntegerField(required=True, help_text='消息id')
+    head = serializers.CharField(required=True, help_text='公告标题')
+    a_content = serializers.CharField(required=True, help_text='公告')
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'head', 'a_content', )
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type='超级管理员')):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+
+        return attrs
+
+
+# 完成所有人更改自己发出的提醒公告
+class EditMessageSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+    a_id = serializers.IntegerField(required=True, help_text='消息id')
+    head = serializers.CharField(required=True, help_text='公告标题')
+    a_content = serializers.CharField(required=True, help_text='公告')
+    set_time = serializers.DateTimeField(required=False, allow_null=True, help_text="提醒时间" )
+
+    class Meta:
+        model = Announce
+        fields = ('user_id', 'head', 'a_content', 'a_id', 'set_time')
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type='超级管理员')):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+
+        return attrs
+
+
+# 2  所有人根据不同传参 查询到时保养提醒 系统公告
+class SelectMessageAloneSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(required=True, help_text='操作人id')
+
+    c_id = serializers.IntegerField(required=True,help_text='用户选择') # 0 系统通知 1 定时通知
+
+    class Meta:
+        model = Announce
+        fields = ('user_id',  'c_id')
+
+    def validate(self, attrs):
+        if not LoginUser.objects.filter(id=attrs['user_id']).filter(is_active=1):
+            raise ValidationError(detail={'code': 999, 'message': ['用户不存在或已停用']})
+        # if not LoginUser.objects.filter(id=attrs['user_id']).filter(
+        #         Q(u_type='运维') | Q(u_type='超级管理员')):
+        #     raise ValidationError(detail={'code': 996, 'message': ['您无权进行此操作']})
+        # if not Announce.objects.filter(id=attrs['a_id']):
+        #     raise ValidationError(detail={'code': 943, 'message': ['公告不存在']})
+
+        return attrs
